@@ -12,7 +12,7 @@ from watchdog.observers import Observer
 log.basicConfig(level=log.DEBUG)
 
 # Arguments
-parser_description = "watch a directory and sync it with the remarkable locally."
+parser_description = "watch a directory and sync it with the remarkable over your local network."
 parser = argparse.ArgumentParser(description=parser_description)
 parser.add_argument("--ip", help="remarkable ip address.")
 parser.add_argument("--username", help="remarkable username.")
