@@ -30,6 +30,7 @@ watch_path = args.watchdir
 recursive = False
 
 remarkable_ip = args.ip
+remarkable_syncdir = "/tmp/"
 remarkable_user = args.username
 remarkable_password = args.password
 
@@ -48,8 +49,8 @@ def run_cmd(cmd, success_msg, error_msg):
 
 def upload_to_remarkable(file_path):
     file_name = file_name_from_path(file_path)
-    cmd = "sshpass -p \"%s\" scp %s %s@%s:/tmp/%s" % (remarkable_password,
-          file_path, remarkable_user, remarkable_ip, file_name)
+    cmd = "sshpass -p \"%s\" scp %s %s@%s:%s/%s" % (remarkable_password,
+          file_path, remarkable_user, remarkable_ip,remarkable_syncdir, file_name)
     log.debug(cmd)
     on_success = "Uploaded %s to %s." % (file_name, remarkable_ip)
     on_fail = "Unable to upload %s to your remarkable at %s" % (file_name,
@@ -59,8 +60,21 @@ def upload_to_remarkable(file_path):
 
 
 def remove_from_remarkable(file_path):
-    print("TODO: rm -f remote file")
+    file_name = file_name_from_path(file_path)
+    cmd = "sshpass -p \"%s\" ssh %s@%s \"rm %s/%s\"" % (remarkable_password,
+          remarkable_user, remarkable_ip, remarkable_syncdir, file_name)
+    log.debug(cmd)
+    on_success = "Removed %s from %s." % (file_name, remarkable_ip)
+    on_fail = "Unable to remove %s from your remarkable at %s" % (file_name,
+              remarkable_ip)
 
+    run_cmd(cmd, on_success, on_fail)
+
+def send_notification(message):
+	on_success = "Notification sent."
+	on_fail = "Unable to send notification."
+	cmd = 'ws push "%s"' % message
+	run_cmd(cmd, on_success, on_fail)
 
 # Event handlers
 def on_created(event):
